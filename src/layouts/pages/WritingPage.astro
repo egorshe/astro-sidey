@@ -2,6 +2,7 @@
 import BaseLayout from "@layouts/BaseLayout.astro"
 import Prose from "@components/common/Prose.astro"
 import PostTags from "@components/common/PostTags.astro"
+import Back from "@components/common/Back.astro"
 import { formatDate } from "@utils/formatDate"
 
 const { frontmatter, readingTime } = Astro.props
@@ -23,5 +24,7 @@ const formattedDate = formatDate(date, "long")
     <slot />
 
     <PostTags tags={tags} />
+
+    <Back label="Back to Writings" href="/writings" class="mt-8" />
   </Prose>
 </BaseLayout>
