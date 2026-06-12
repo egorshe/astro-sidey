@@ -40,7 +40,7 @@ title: "${title}"
 description: "${description}"
 date: ${today}
 tags: [${tagList}]
-draft: true
+draft: false
 ---
 
 `
