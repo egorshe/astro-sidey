@@ -9,16 +9,16 @@ export const sideyConfig = {
    */
   site: {
     // The main title displayed in browser tabs and search engine results
-    title: "Astro Sidey",
+    title: "Mato Baltica",
 
     // A short fallback summary of your site used for SEO and social share cards
-    description: "A minimal, content-focused Astro theme for personal sites.",
+    description: "Baltic cinema and academic research",
 
     // The production domain where your site is deployed (no trailing slash)
-    url: "https://sidey.odhyp.com",
+    url: "https://matobaltica.ca",
 
     // Your name, utilized in copyright strings and author meta tags
-    author: "Odhy Pradhana",
+    author: "Egor Shmonin",
 
     // The primary language attribute for HTML accessibility engines (e.g., "en", "id")
     locale: "en",
@@ -36,6 +36,6 @@ export const sideyConfig = {
     { label: "About", href: "/about" },
     { label: "RSS", href: "/rss.xml" },
   ],
-}
+};
 
-export type SideyConfigType = typeof sideyConfig
+export type SideyConfigType = typeof sideyConfig;
