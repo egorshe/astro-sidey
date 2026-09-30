@@ -1,0 +1,140 @@
+---
+interface Props {
+  path?: string;
+  images: string[] | string;
+  alt?: string;
+}
+
+const { path = "", images, alt = "Carousel slide" } = Astro.props;
+
+const imageList =
+  typeof images === "string"
+    ? images.split(",").map((img) => img.trim())
+    : images;
+
+const cleanPath = path ? (path.endsWith("/") ? path : `${path}/`) : "";
+---
+
+<div class="embla relative my-6 select-none group" aria-label="Image gallery">
+  <!-- Viewport с курсором-рукой для свайпа -->
+  <div class="embla__viewport overflow-hidden rounded-lg cursor-grab active:cursor-grabbing">
+    <div class="embla__container flex touch-pan-y [backface-visibility:hidden]">
+      {imageList.map((img, index) => (
+        <div class="embla__slide min-w-0 flex-[0_0_100%]">
+          <!-- pointer-events-none отключает перехват кликов лайтбоксом -->
+          <img
+            src={`${cleanPath}${img}`}
+            alt={`${alt} ${index + 1}`}
+            class="block h-auto w-full object-cover pointer-events-none select-none"
+            loading={index === 0 ? "eager" : "lazy"}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {imageList.length > 1 && (
+    <>
+      <!-- Левая стрелка с контрастной тенью без плашек -->
+      <button
+        class="embla__prev absolute left-2 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] transition-all hover:scale-110 active:scale-95 disabled:opacity-0 disabled:pointer-events-none"
+        aria-label="Previous slide"
+      >
+        <svg
+          class="h-8 w-8 stroke-current stroke-[2.5] fill-none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </button>
+
+      <!-- Правая стрелка -->
+      <button
+        class="embla__next absolute right-2 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] transition-all hover:scale-110 active:scale-95 disabled:opacity-0 disabled:pointer-events-none"
+        aria-label="Next slide"
+      >
+        <svg
+          class="h-8 w-8 stroke-current stroke-[2.5] fill-none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </button>
+
+      <!-- Точки пагинации снизу -->
+      <div class="embla__dots absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 space-x-2">
+        {imageList.map((_, index) => (
+          <button
+            class="embla__dot h-2 w-2 cursor-pointer rounded-full bg-white/40 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-all"
+            data-index={index}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </>
+  )}
+</div>
+
+<script>
+  import EmblaCarousel from "embla-carousel";
+
+  const instances = new Map<HTMLElement, ReturnType<typeof EmblaCarousel>>();
+
+  function initEmblaCarousels() {
+    document.querySelectorAll<HTMLElement>(".embla").forEach((node) => {
+      if (instances.has(node)) return;
+
+      const viewportNode = node.querySelector<HTMLElement>(".embla__viewport");
+      if (!viewportNode) return;
+
+      const prevBtn = node.querySelector<HTMLButtonElement>(".embla__prev");
+      const nextBtn = node.querySelector<HTMLButtonElement>(".embla__next");
+      const dots = node.querySelectorAll<HTMLButtonElement>(".embla__dot");
+
+      const emblaApi = EmblaCarousel(viewportNode, { loop: false });
+      instances.set(node, emblaApi);
+
+      prevBtn?.addEventListener("click", () => emblaApi.scrollPrev());
+      nextBtn?.addEventListener("click", () => emblaApi.scrollNext());
+      dots.forEach((dot, i) =>
+        dot.addEventListener("click", () => emblaApi.scrollTo(i)),
+      );
+
+      const updateUI = () => {
+        const selected = emblaApi.selectedScrollSnap();
+
+        // Подсветка активной точки
+        dots.forEach((dot, i) => {
+          const active = i === selected;
+          dot.classList.toggle("bg-white", active);
+          dot.classList.toggle("scale-125", active);
+          dot.classList.toggle("bg-white/40", !active);
+        });
+
+        // Скрытие стрелок на границах
+        if (prevBtn) prevBtn.disabled = !emblaApi.canScrollPrev();
+        if (nextBtn) nextBtn.disabled = !emblaApi.canScrollNext();
+      };
+
+      emblaApi.on("select", updateUI).on("reInit", updateUI);
+      updateUI();
+    });
+  }
+
+  function destroyEmblaCarousels() {
+    instances.forEach((api) => api.destroy());
+    instances.clear();
+  }
+
+  initEmblaCarousels();
+  document.addEventListener("astro:page-load", initEmblaCarousels);
+  document.addEventListener("astro:before-swap", destroyEmblaCarousels);
+</script>
