@@ -13,8 +13,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.3.1",
-    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/markdown-remark": "^7.3.2",
+    "@astrojs/mdx": "^8.0.3",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@expressive-code/plugin-collapsible-sections": "^0.44.0",
@@ -22,7 +22,7 @@
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource-variable/geist-mono": "^5.2.8",
     "@tailwindcss/vite": "^4.3.0",
-    "astro": "^7.3.5",
+    "astro": "^7.3.8",
     "astro-expressive-code": "^0.44.0",
     "astro-icon": "^1.1.5",
     "astro-leaflet": "^1.12.0",
